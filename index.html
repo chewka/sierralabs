@@ -1,0 +1,396 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lab Sims</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e1118; --bg2:#141924; --panel:#171d29; --panel2:#1d2431; --line:#262f3f; --line2:#333e52;
+  --ink:#c9d3e1; --ink2:#8d99ad; --ink3:#5e6b80;
+  --amber:#f0a93b; --teal:#2fb8a8; --violet:#8a6bd6; --pink:#e06b8b; --blue:#4a8fd4;
+  --green:#5fbf61; --red:#e2574c;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --pix:"Silkscreen",var(--mono);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#0e1118; --bg2:#141924; /* this app is intentionally dark in both schemes */
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:12px;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+button,select,input{font-family:inherit;font-size:inherit;color:inherit}
+h3,h4{margin:0}
+code{font-family:var(--mono);color:var(--ink2)}
+
+/* ---------- app frame ---------- */
+#app{display:grid;grid-template-rows:auto 1fr auto;height:100dvh;gap:0}
+
+/* ---------- top bar ---------- */
+#top{
+  display:flex;align-items:center;gap:10px;padding:8px 14px;background:linear-gradient(#1a2130,#141a26);
+  border-bottom:1px solid var(--line);flex-wrap:wrap
+}
+.brand{font-family:var(--pix);font-size:13px;letter-spacing:.5px;color:var(--amber);margin-right:4px;white-space:nowrap}
+.brand small{display:block;font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:0}
+.btn{
+  background:var(--panel2);border:1px solid var(--line2);border-radius:5px;padding:6px 11px;cursor:pointer;
+  letter-spacing:.4px;transition:.12s;white-space:nowrap
+}
+.btn:hover{background:#28324a;border-color:#48566f}
+.btn.on{background:var(--amber);border-color:var(--amber);color:#1a1205;font-weight:600}
+#btnPlay{min-width:96px;font-family:var(--pix);font-size:11px}
+#btnPlay.on{background:var(--teal);border-color:var(--teal);color:#06231f}
+.speeds{display:flex;gap:3px;background:var(--panel);padding:3px;border-radius:6px;border:1px solid var(--line)}
+.speeds .btn{padding:4px 8px;border:1px solid transparent;background:transparent;font-size:11px}
+.speeds .btn.on{background:var(--amber);color:#1a1205}
+#clock{font-family:var(--pix);font-size:12px;color:var(--teal);background:#0c1218;border:1px solid var(--line);
+  padding:6px 10px;border-radius:5px;min-width:122px;text-align:center}
+#expName{color:var(--ink2);flex:1;min-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#btnChaos{color:#dcc8ff;border-color:#453a63}
+#btnChaos:hover{background:#2e2446}
+.spacer{flex:1}
+
+/* ---------- main ---------- */
+#main{display:grid;grid-template-columns:232px minmax(0,1fr) 290px;gap:10px;padding:10px;min-height:0}
+aside{display:flex;flex-direction:column;gap:9px;min-height:0;overflow:auto;scrollbar-width:thin}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:9px 10px}
+.card > h4{font-family:var(--pix);font-size:9px;letter-spacing:.6px;color:var(--ink3);margin-bottom:7px;text-transform:uppercase}
+.muted{color:var(--ink3)}
+.sm{font-size:10.5px;line-height:1.45}
+.ind{padding-left:2px;margin-top:-2px;margin-bottom:4px}
+
+/* scientist card */
+.sciTop{display:flex;gap:10px;align-items:center}
+#portrait{width:60px;height:60px;image-rendering:pixelated;border-radius:5px;border:1px solid var(--line2);flex:none}
+.sciMeta b{display:block;font-size:12px;color:var(--ink)}
+.sciMeta span{display:block;color:var(--amber);font-size:11px;margin-top:2px}
+.actionLine{margin-top:9px;padding:7px 8px;background:#101620;border:1px solid var(--line);border-radius:5px}
+.actionLine em{display:block;font-style:normal;color:var(--ink3);font-size:9.5px;letter-spacing:.4px;text-transform:uppercase}
+.actionLine span{color:var(--teal)}
+.obj span{color:var(--amber)}
+.need{display:grid;grid-template-columns:62px 1fr 22px;align-items:center;gap:6px;margin:4px 0;font-size:10.5px}
+.need span{color:var(--ink2)}
+.need em{font-style:normal;color:var(--ink3);text-align:right}
+.track{height:6px;background:#0c1118;border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.track i{display:block;height:100%;border-radius:3px;transition:width .3s}
+
+/* stage */
+#stageWrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;position:relative}
+#frame{position:relative;width:min(100%,1024px,calc((100dvh - 296px) * 1.6));border:1px solid var(--line2);border-radius:8px;overflow:hidden;
+  background:#0b0f16;box-shadow:0 10px 36px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.02)}
+#stage{display:block;width:100%;height:auto;image-rendering:pixelated;image-rendering:crisp-edges}
+#banner{position:absolute;top:10px;left:50%;transform:translate(-50%,-26px);opacity:0;transition:.25s;
+  background:rgba(14,18,26,.92);border:1px solid var(--line2);border-radius:5px;padding:5px 12px;font-size:11px;pointer-events:none}
+#banner.show{opacity:1;transform:translate(-50%,0)}
+.hint{color:var(--ink3);font-size:10px;margin-top:7px;text-align:center}
+
+/* right panel bits */
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:3px 0;border-bottom:1px dotted #222b3a;font-size:11px}
+.row:last-child{border-bottom:0}
+.row b{font-weight:600;color:var(--ink)}
+.row b.ok{color:var(--teal)} .row b.bad{color:var(--red)} .row b.warn{color:var(--amber)}
+.row.pub span{color:var(--ink2);line-height:1.45}
+.row code{font-size:10px;color:var(--ink3);flex:none}
+.pstep{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:11px;color:var(--ink3)}
+.pstep i{width:7px;height:7px;border-radius:50%;border:1px solid var(--line2);flex:none}
+.pstep.done{color:var(--ink2)} .pstep.done i{background:var(--teal);border-color:var(--teal)}
+.pstep.active{color:var(--ink)} .pstep.active i{background:var(--amber);border-color:var(--amber);box-shadow:0 0 0 3px rgba(240,169,59,.16)}
+.pstep span{flex:1}
+.tag{font-size:9.5px;color:var(--amber);background:rgba(240,169,59,.1);border:1px solid rgba(240,169,59,.26);padding:1px 5px;border-radius:3px}
+#chart{width:100%;height:132px;display:block}
+.segRow{display:flex;gap:4px;margin-bottom:7px}
+.seg{flex:1;padding:4px;font-size:9.5px;text-align:center;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:4px;cursor:pointer;color:var(--ink3);letter-spacing:.3px}
+.seg.on{background:#243049;color:var(--ink);border-color:#3d4d6b}
+.seedRow{display:flex;gap:6px;align-items:center;margin-top:7px;font-size:10.5px;color:var(--ink3)}
+#seedBox{width:74px;background:#0c1118;border:1px solid var(--line);border-radius:4px;padding:3px 6px;color:var(--ink)}
+
+/* notebook */
+#book{border-top:1px solid var(--line);background:linear-gradient(#131924,#10151f);padding:7px 14px 9px;height:138px;display:flex;flex-direction:column}
+#book h4{font-family:var(--pix);font-size:9px;letter-spacing:.6px;color:var(--ink3);margin-bottom:5px}
+#bookList{overflow:auto;flex:1;scrollbar-width:thin;padding-right:6px}
+.entry{display:flex;gap:10px;padding:2.5px 0;font-size:11px;border-bottom:1px dotted #1d2533}
+.entry time{color:var(--ink3);flex:none;width:92px;font-variant-numeric:tabular-nums}
+.entry span{color:var(--ink2)}
+.entry.good span{color:var(--teal)} .entry.warn span{color:var(--amber)}
+
+/* overlays */
+.sheet{position:fixed;inset:0;background:rgba(6,9,14,.72);display:none;align-items:center;justify-content:center;
+  padding:20px;z-index:40;backdrop-filter:blur(3px)}
+.sheet.open{display:flex}
+.sheetBox{background:var(--panel);border:1px solid var(--line2);border-radius:10px;max-width:880px;width:100%;
+  max-height:86dvh;overflow:auto;padding:18px}
+.sheetBox h2{font-family:var(--pix);font-size:14px;letter-spacing:.5px;color:var(--amber);margin:0 0 4px}
+.close{float:right;background:none;border:1px solid var(--line2);border-radius:5px;padding:3px 9px;cursor:pointer;color:var(--ink2)}
+.close:hover{color:var(--ink);border-color:#4a5870}
+
+/* experiment picker */
+#expList{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:12px;margin-top:14px}
+.expCard{background:var(--panel2);border:1px solid var(--line2);border-top:3px solid var(--c);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.expCard .eh b{font-family:var(--pix);font-size:9px;color:var(--c);letter-spacing:.5px}
+.expCard h3{font-size:13px;margin:3px 0}
+.expCard em{font-style:normal;color:var(--ink3);font-size:10px}
+.expCard p{margin:0;font-size:11px;line-height:1.5;color:var(--ink2)}
+.warnNote{border-left:2px solid var(--amber);padding-left:8px;color:var(--ink3)!important;font-size:10px!important}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opts label{display:flex;flex-direction:column;gap:3px;font-size:10px;color:var(--ink3)}
+.opts select{background:#0d131c;border:1px solid var(--line2);border-radius:4px;padding:5px 6px;color:var(--ink)}
+.start{margin-top:auto;background:var(--c);border:0;border-radius:5px;padding:8px;cursor:pointer;color:#10131a;font-weight:600;letter-spacing:.3px}
+.start:hover{filter:brightness(1.1)}
+
+/* chaos drawer */
+#chaosPanel{position:fixed;top:0;right:0;height:100dvh;width:320px;max-width:92vw;background:var(--panel);
+  border-left:1px solid var(--line2);transform:translateX(102%);transition:.22s;z-index:50;display:flex;flex-direction:column;
+  box-shadow:-14px 0 40px rgba(0,0,0,.45)}
+#chaosPanel.open{transform:none}
+#chaosPanel header{padding:13px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+#chaosPanel header h2{font-family:var(--pix);font-size:12px;color:var(--violet);margin:0}
+#chaosBody{padding:12px 14px;overflow:auto;display:flex;flex-direction:column;gap:9px}
+#chaosPanel.disabled #chaosBody{opacity:.4;pointer-events:none}
+.switch{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink2)}
+.switch input{accent-color:var(--violet)}
+.chaosGroup h5{margin:10px 0 6px;font-family:var(--pix);font-size:9px;letter-spacing:.5px;color:var(--ink3)}
+.chaosBtn{display:block;width:100%;text-align:left;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer}
+.chaosBtn:hover{background:#283148;border-color:#47567a}
+.chaosBtn b{display:block;font-size:11px;color:var(--ink)}
+.chaosBtn span{display:block;font-size:10px;color:var(--ink3);margin-top:2px;line-height:1.4}
+.chaosGroup.silly .chaosBtn{border-color:#3f3360}
+.chaosGroup.silly .chaosBtn b{color:#c7aef5}
+.safeNote{font-size:10px;color:var(--ink3);line-height:1.5;border-top:1px solid var(--line);padding-top:9px;margin-top:4px}
+
+/* report */
+#report .sheetBox{max-width:520px}
+.stamp{float:right;font-family:var(--pix);font-size:10px;padding:4px 9px;border-radius:4px;border:1px dashed}
+.stamp.good{color:var(--teal);border-color:var(--teal)}
+.stamp.bad{color:var(--amber);border-color:var(--amber)}
+#reportHead{font-family:var(--pix);font-size:16px;color:var(--ink);margin:12px 0 10px;line-height:1.5}
+#reportBody{margin:0;padding-left:16px;line-height:1.7;color:var(--ink2);font-size:11.5px}
+#reportFoot{margin-top:14px;padding-top:10px;border-top:1px solid var(--line);color:var(--ink3);font-size:10px;line-height:1.5}
+
+/* about */
+#about .sheetBox{max-width:620px;line-height:1.65;font-size:11.5px;color:var(--ink2)}
+#about h3{font-size:12px;color:var(--ink);margin:14px 0 5px;font-family:var(--pix);letter-spacing:.4px}
+#about p{margin:0 0 8px}
+#about ul{margin:0 0 8px;padding-left:17px}
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  #main{grid-template-columns:200px minmax(0,1fr) 250px;gap:8px}
+}
+@media (max-width:940px){
+  body{overflow:auto}
+  #app{height:auto;min-height:100dvh}
+  #main{grid-template-columns:1fr;padding:12px 16px}
+  aside{max-height:none;overflow:visible}
+  #left{order:2} #stageWrap{order:1} #right{order:3}
+  #book{height:170px;padding:8px 16px 12px}
+  #chart{height:150px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header id="top">
+    <div class="brand">THE LAB SIMS<small>autonomous pixel laboratory</small></div>
+    <button class="btn" id="btnPlay">▶ PLAY</button>
+    <div class="speeds">
+      <button class="btn" data-speed="0">❙❙</button>
+      <button class="btn on" data-speed="1">1×</button>
+      <button class="btn" data-speed="5">5×</button>
+      <button class="btn" data-speed="20">20×</button>
+      <button class="btn" data-speed="100">100×</button>
+    </div>
+    <button class="btn" id="btnExp">EXPERIMENT</button>
+    <div id="clock">Day 1 · 08:00</div>
+    <div id="expName">—</div>
+    <button class="btn" id="btnSound" title="Lab ambience">♪</button>
+    <button class="btn" id="btnAbout" title="About this simulation">?</button>
+    <button class="btn" id="btnChaos">CHAOS</button>
+  </header>
+
+  <div id="main">
+    <!-- LEFT -->
+    <aside id="left">
+      <div class="card">
+        <h4>Scientist</h4>
+        <div class="sciTop">
+          <canvas id="portrait" width="48" height="48"></canvas>
+          <div class="sciMeta">
+            <b>Dr. Wren Okafor</b>
+            <span id="mood">Steady</span>
+            <div class="muted sm" style="margin-top:3px">Runs the lab. Runs on coffee.</div>
+          </div>
+        </div>
+        <div class="actionLine"><em>Currently</em><span id="action">Waiting to start</span></div>
+        <div class="actionLine obj"><em>Objective</em><span id="objective">—</span></div>
+      </div>
+      <div class="card">
+        <h4>Needs</h4>
+        <div id="needs"></div>
+      </div>
+      <div class="card">
+        <h4>Inspector</h4>
+        <div id="inspect"></div>
+      </div>
+    </aside>
+
+    <!-- STAGE -->
+    <section id="stageWrap">
+      <div id="frame">
+        <canvas id="stage" width="512" height="320"></canvas>
+        <div id="banner"></div>
+      </div>
+      <div class="hint">space = play/pause · 1 2 3 4 = speed · c = chaos · click anything in the lab to inspect it</div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside id="right">
+      <div class="card">
+        <h4>Experiment progress</h4>
+        <div id="progress"></div>
+      </div>
+      <div class="card">
+        <h4>Live data</h4>
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="card">
+        <h4>Results</h4>
+        <div class="segRow">
+          <div class="seg on" data-prov="sim">Simulated outcome</div>
+          <div class="seg" data-prov="pub">Published finding</div>
+        </div>
+        <div id="results"></div>
+        <div class="seedRow"><span>Seed</span><input id="seedBox" type="number" value="1337"></div>
+      </div>
+      <div class="card">
+        <h4>Samples</h4>
+        <div id="samples"></div>
+      </div>
+      <div class="card">
+        <h4>Instruments</h4>
+        <div id="instrument"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer id="book">
+    <h4>Laboratory notebook</h4>
+    <div id="bookList"></div>
+  </footer>
+</div>
+
+<!-- CHAOS DRAWER -->
+<div id="chaosPanel">
+  <header>
+    <h2>CHAOS</h2>
+    <button class="close" id="chaosClose">close</button>
+  </header>
+  <div id="chaosBody">
+    <label class="switch"><input type="checkbox" id="chaosEnable" checked> Chaos enabled</label>
+    <label class="switch"><input type="checkbox" id="chaosAuto"> Fire plausible events at random</label>
+    <div class="chaosGroup">
+      <h5>Plausible lab disruptions</h5>
+      <div id="chaosPlausible"></div>
+    </div>
+    <div class="chaosGroup silly">
+      <h5>Openly fictional events</h5>
+      <div id="chaosSilly"></div>
+    </div>
+    <div class="safeNote">
+      Every event here is a nuisance, never a hazard: no spills of anything dangerous, no bypassed controls,
+      no shortcuts rewarded. The scientist notices the problem, deals with it, and marks affected results
+      as unreliable rather than quietly keeping them.
+    </div>
+  </div>
+</div>
+
+<!-- EXPERIMENT PICKER -->
+<div class="sheet" id="expModal">
+  <div class="sheetBox">
+    <button class="close" id="expClose">close</button>
+    <h2>CHOOSE AN EXPERIMENT</h2>
+    <div class="muted sm">Each run is a full workflow with real dependencies — the scientist cannot read a plate
+      that has not been incubated yet. Change the conditions and the outcome changes with them.</div>
+    <div id="expList"></div>
+  </div>
+</div>
+
+<!-- REPORT CARD -->
+<div class="sheet" id="report">
+  <div class="sheetBox">
+    <button class="close" id="reportClose">close</button>
+    <span class="stamp good" id="reportStamp">RUN ACCEPTED</span>
+    <h2 id="reportTitle">Run complete</h2>
+    <div id="reportHead"></div>
+    <ul id="reportBody"></ul>
+    <div id="reportFoot"></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="sheet" id="about">
+  <div class="sheetBox">
+    <button class="close" id="aboutClose">close</button>
+    <h2>ABOUT THIS SIMULATION</h2>
+    <p>A tiny autonomous laboratory. Press play and the scientist reads the active workflow, works out which step
+      is ready, walks to the right equipment, does the work, records it, and moves on — with no input from you.
+      Then you can go and cause problems.</p>
+
+    <h3>What the numbers are</h3>
+    <p>Every measurement, curve, chromatogram and percentage in this game is produced by a small toy model
+      written into the simulation. None of it is measured data, and none of it reproduces numeric values from any
+      publication. The <em>shape</em> of each workflow — the order of the steps, what depends on what, and which way
+      the results tend to move — follows standard published laboratory methodology for this kind of work.</p>
+    <p>The “Published finding / Simulated outcome” switch in the results panel makes that split explicit:
+      one side shows the direction a finding takes in the methodology being modelled, the other shows the numbers
+      this simulation just invented.</p>
+
+    <h3>What it does not do</h3>
+    <ul>
+      <li>It contains no protocols: no formulations, no concentrations, no strain-construction detail. Steps are
+        described at the level of “prepare the precursor”, which is what you would see watching from the doorway.</li>
+      <li>Experiment D is laboratory and in-vitro research only. Nothing in it is a treatment or evidence of one,
+        and its gel-handling steps are an openly simplified stand-in rather than a reconstructed procedure.</li>
+      <li>Nothing hazardous happens, and no unsafe shortcut is ever rewarded.</li>
+    </ul>
+
+    <h3>Workflow sources</h3>
+    <p>The four workflows are modelled on the methodology chapters of a 2023 doctoral dissertation on engineered
+      living material platforms (hydrogel preservation; reusable encapsulated protein production; a three-module
+      microbial consortium; an engineered probiotic biosensor). The simulation reproduces the <em>sequence of work</em>
+      from those chapters, not their data.</p>
+
+    <h3>Controls</h3>
+    <ul>
+      <li><b>Space</b> play / pause · <b>1 2 3 4</b> speed · <b>0</b> pause · <b>c</b> chaos drawer</li>
+      <li>Click the scientist, any instrument, or the cat to inspect it</li>
+      <li>Set a seed and restart an experiment to replay exactly the same run</li>
+    </ul>
+  </div>
+</div>
+
+<script src="js/util.js"></script>
+<script src="js/world.js"></script>
+<script src="js/science.js"></script>
+<script src="js/art.js"></script>
+<script src="js/actors.js"></script>
+<script src="js/experiments.js"></script>
+<script src="js/chaos.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
+
+</body></html>
